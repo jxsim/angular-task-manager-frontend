@@ -1,0 +1,57 @@
+<div class="container mt-2">
+  <h2>Update Task</h2>
+
+  <form [formGroup]="editTaskForm" (ngSubmit)="onSubmit()">
+    <div class="form-group row">
+      <label for="task-desc" class="col-md-2">Task:</label>
+      <div class="col-md-10">
+        <input type="text" id="task-desc" formControlName="taskDescription" class="form-control" [class.border-danger]="errors('taskDescription')"/>
+        <div *ngIf="errors('taskDescription')" class="text-danger small">{{ errors('taskDescription') }}</div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="priority" class="col-md-2">Priority:</label>
+      <p class="col-md-1">{{ editTaskForm.value.priority }}</p>
+      <div class="col-md-9">
+        <input type="range" id="priority" formControlName="priority" class="form-control custom-range" min="0" max="30" step="1"/>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="parent-task-desc" class="col-md-2">Parent Task:</label>
+      <div class="col-md-10">
+        <input type="text" id="parent-task-desc" formControlName="parentTask" class="form-control" [ngbTypeahead]="searchTask" [resultFormatter]="searchTaskFormatter" [inputFormatter]="searchTaskFormatter"
+               (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)" #instance="ngbTypeahead"/>
+      </div>
+      <div class="col-md-10 offset-md-2">
+        <div *ngIf="errors('parentTask')" class="text-danger small">{{ errors('parentTask') }}</div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="start-date" class="col-md-2">Start Date:</label>
+      <div class="input-group col-md-10">
+        <input type="text" id="start-date" [maxDate]="editTaskForm.value.endDate" formControlName="startDate" ngbDatepicker #start="ngbDatepicker" (focus)="start.open()" class="form-control"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="start.toggle()" type="button"><fa-icon [icon]="faCalendar"></fa-icon></button>
+        </div>
+      </div>
+      <div class="col-md-10 offset-md-2">
+        <div *ngIf="errors('startDate')" class="text-danger small">{{ errors('startDate') }}</div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="end-date" class="col-md-2">End Date:</label>
+      <div class="input-group col-md-10">
+        <input type="text" id="end-date" [minDate]="editTaskForm.value.startDate" formControlName="endDate" ngbDatepicker #end="ngbDatepicker" (focus)="end.open()" class="form-control"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="end.toggle()" type="button"><fa-icon [icon]="faCalendar"></fa-icon></button>
+        </div>
+      </div>
+      <div class="col-md-10 offset-md-2">
+        <div *ngIf="errors('endDate')" class="text-danger small">{{ errors('endDate') }}</div>
+      </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary mr-2" [disabled]="!editTaskForm.valid" value="Update" />
+    <a routerLink="/tasks"><button type="button" class="btn btn-secondary">Cancel</button></a>
+  </form>
+</div>

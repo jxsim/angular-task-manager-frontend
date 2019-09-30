@@ -1,0 +1,7 @@
+.read-only {
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.read-only p {
+  border-bottom: 1px dotted grey;
+}

@@ -1,0 +1,75 @@
+<div class="container mt-2">
+  <h2>View Task</h2>
+  <form [formGroup]="searchTaskForm">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="search-task-desc">Task:</label>
+        <input type="text" id="search-task-desc" formControlName="taskDescription" class="form-control"/>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="search-parent-task-desc">Parent Task:</label>
+        <input type="text" id="search-parent-task-desc" formControlName="parentTask" class="form-control" [ngbTypeahead]="searchTask" [resultFormatter]="searchTaskFormatter" [inputFormatter]="searchTaskFormatter"
+               (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)" #instance="ngbTypeahead"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label for="search-priority-from">Priority From:</label>
+        <input type="number" min="0" [max]="searchTaskForm.value.priorityTo || 30" id="search-priority-from" formControlName="priorityFrom" class="form-control"/>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="search-priority-to">Priority To:</label>
+        <input type="number" [min]="searchTaskForm.value.priorityFrom || 0" max="30" id="search-priority-to" formControlName="priorityTo" class="form-control"/>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="search-start-date">Start Date:</label>
+        <div class="input-group">
+          <input type="text" id="search-start-date" [maxDate]="searchTaskForm.value.endDate" ngbDatepicker #start="ngbDatepicker" (focus)="start.open()" formControlName="startDate" class="form-control"/>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="start.toggle()" type="button"><fa-icon [icon]="faCalendar"></fa-icon></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="search-end-date">End Date:</label>
+        <div class="input-group">
+          <input type="text" id="search-end-date" [minDate]="searchTaskForm.value.startDate" ngbDatepicker #end="ngbDatepicker" (focus)="end.open()" formControlName="endDate" class="form-control"/>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="end.toggle()" type="button"><fa-icon [icon]="faCalendar"></fa-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <hr />
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>S/N</th>
+        <th>Task</th>
+        <th>Parent Task</th>
+        <th>Priority</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of (tasks | filteredTasks: searchTaskForm.value); index as i">
+        <td>{{ i+1 }}</td>
+        <td>{{ t.taskDescription }}</td>
+        <td>{{ t.parentTask ? t.parentTask["taskDescription"] : 'nil' }}</td>
+        <td>{{ t.priority }}</td>
+        <td>{{ t.startDate | date }}</td>
+        <td>{{ t.endDate | date }}</td>
+        <td>
+          <button class="btn btn-outline-primary mx-2" [disabled]="t.isEnded" [routerLink]="['/tasks/', t.id, 'edit']">Edit</button>
+          <button class="btn btn-danger" [disabled]="t.isEnded" (click)="endTask(t.id)">End Task</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
